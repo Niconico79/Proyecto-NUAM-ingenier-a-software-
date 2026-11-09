@@ -1,0 +1,249 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }} | NUAM Exchange</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e2f;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00ff88;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00ff88;
+            text-decoration: none;
+        }
+
+        .user-info {
+            color: #aaaaaa;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background-color: #2a2a3f;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #3a3a4f;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .form-header {
+            border-bottom: 1px solid #44445a;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: #00ff88;
+            font-size: 1.5rem;
+            margin: 0 0 8px;
+        }
+
+        .subtitle {
+            color: #aaaaaa;
+            font-size: 0.9rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            color: #cccccc;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #1e1e2f;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 4px rgba(0,255,136,0.3);
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            accent-color: #00ff88;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #1e1e2f;
+            border-radius: 5px;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+        }
+
+        .errorlist {
+            color: #ff6675;
+            font-size: 0.85rem;
+            padding-left: 18px;
+        }
+
+        .helptext {
+            color: #999;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 30px;
+            border-top: 1px solid #44445a;
+            padding-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: #00ff88;
+            color: #121212;
+        }
+
+        .btn-primary:hover {
+            background-color: #00cc6a;
+        }
+
+        .btn-secondary {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <a href="{% url 'inicio' %}" class="logo">
+            NUAM Exchange | Mantenedor
+        </a>
+
+        <div class="user-info">
+            Operador: A. Pardo | B. Candia
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="form-header">
+            <h1>{{ titulo }}</h1>
+            <div class="subtitle">
+                Ingreso y administración de calificaciones tributarias
+            </div>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                {% for field in form %}
+                    <div class="form-group {% if field.name == 'descripcion' %}full{% endif %}">
+
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                            <div class="checkbox-group">
+                                {{ field }}
+                                <label for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+                            </div>
+                        {% else %}
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                        {% endif %}
+
+                        {{ field.errors }}
+
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <div class="actions">
+                <a href="{% url 'inicio' %}" class="btn btn-secondary">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="btn btn-primary">
+                    Guardar calificación
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</body>
+</html>

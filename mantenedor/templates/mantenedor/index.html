@@ -1,60 +1,275 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuam - Mantenedor</title>
-    
+    <title>NUAM - Mantenedor</title>
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1e1e2f; color: #ffffff; margin: 0; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00ff88; padding-bottom: 10px; margin-bottom: 20px; }
-        .logo { font-size: 1.8rem; font-weight: bold; color: #00ff88; text-decoration: none; }
-        .user-info { font-size: 1rem; color: #aaaaaa; }
-        .toolbar { display: flex; gap: 15px; margin-bottom: 20px; background-color: #2a2a3f; padding: 15px; border-radius: 8px; align-items: center; }
-        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
-        label { font-size: 0.9rem; margin-bottom: 5px; color: #cccccc; }
-        select, input { padding: 10px; border-radius: 4px; border: 1px solid #444; background-color: #1e1e2f; color: #fff; width: 100%; box-sizing: border-box; }
-        .btn { padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; }
-        .btn-primary { background-color: #00ff88; color: #121212; }
-        .btn-primary:hover { background-color: #00cc6a; }
-        .btn-secondary { background-color: #4a90e2; color: #fff; }
-        .btn-danger { background-color: #ff4757; color: #fff; }
-        table { width: 100%; border-collapse: collapse; background-color: #2a2a3f; border-radius: 8px; overflow: hidden; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #3a3a4f; }
-        th { background-color: #1a1a2e; color: #00ff88; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e2f;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00ff88;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00ff88;
+            text-decoration: none;
+        }
+
+        .user-info { color: #aaaaaa; }
+
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            background-color: #2a2a3f;
+            padding: 15px;
+            border-radius: 8px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #cccccc;
+        }
+
+        select, input {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background-color: #1e1e2f;
+            color: #fff;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #00ff88;
+            color: #121212;
+        }
+
+        .btn-secondary {
+            background-color: #4a90e2;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background-color: #ff4757;
+            color: #fff;
+        }
+
+        .btn-edit {
+            background-color: #e0a800;
+            color: #121212;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #2a2a3f;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #3a3a4f;
+        }
+
+        th {
+            background-color: #1a1a2e;
+            color: #00ff88;
+        }
+
         tr:nth-child(even) { background-color: #242436; }
         tr:hover { background-color: #32324a; }
-        .container { max-width: 600px; margin: 0 auto; background-color: #2a2a3f; padding: 30px; border-radius: 10px; border: 1px solid #00ff88; }
-        .file-drop { border: 2px dashed #00ff88; padding: 40px; text-align: center; border-radius: 8px; background-color: #1e1e2f; margin-bottom: 20px; cursor: pointer; }
-    </style>
 
+        .acciones {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .acciones form { margin: 0; }
+
+        .mensaje {
+            background: #164d37;
+            color: #00ff88;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .vacio {
+            text-align: center;
+            color: #aaaaaa;
+            padding: 30px;
+        }
+    </style>
 </head>
+
 <body>
+
     <div class="header">
-        <a href="index.html" class="logo">NUAM Exchange | Mantenedor</a>
-        <div class="user-info">Operador: A. Pardo | B. Candia</div>
+        <a href="{% url 'inicio' %}" class="logo">
+            NUAM Exchange | Mantenedor
+        </a>
+
+        <div class="user-info">
+            Operador: A. Pardo | B. Candia
+        </div>
     </div>
+
+    {% if messages %}
+        {% for mensaje in messages %}
+            <div class="mensaje">{{ mensaje }}</div>
+        {% endfor %}
+    {% endif %}
+
     <div class="toolbar">
-        <div class="form-group" style="margin: 0;">
-            <label>Mercado</label>
-            <select><option>Acciones</option><option>Fondos Mutuos</option><option>CFI</option></select>
-        </div>
-        <div class="form-group" style="margin: 0;">
-            <label>Ejercicio Comercial</label>
-            <select><option>2026</option><option>2025</option></select>
-        </div>
-        <button class="btn btn-primary" style="margin-top: 20px;">Buscar</button>
-        <a href="ingreso.html" class="btn btn-secondary" style="margin-top: 20px; margin-left: auto;">+ Ingreso Manual</a>
-        <a href="carga.html" class="btn btn-secondary" style="margin-top: 20px;">Carga Masiva</a>
+
+        <a href="{% url 'crear' %}" class="btn btn-secondary">
+            + Ingreso Manual
+        </a>
+
+        <form method="GET" class="toolbar" style="margin:0; padding:0; background:none;">
+
+            <div class="form-group">
+                <label for="mercado">Mercado</label>
+                <select name="mercado" id="mercado">
+                    <option value="">Todos los mercados</option>
+
+                    {% for codigo, nombre in mercados %}
+                        <option value="{{ codigo }}"
+                            {% if mercado_seleccionado == codigo %}selected{% endif %}>
+                            {{ nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="ejercicio">Ejercicio comercial</label>
+                <select name="ejercicio" id="ejercicio">
+                    <option value="">Todos los ejercicios</option>
+
+                    {% for anio in ejercicios %}
+                        <option value="{{ anio }}"
+                            {% if ejercicio_seleccionado == anio|stringformat:"s" %}selected{% endif %}>
+                            {{ anio }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Filtrar
+            </button>
+
+            <a href="{% url 'inicio' %}" class="btn btn-secondary">
+                Limpiar filtros
+            </a>
+
+        </form>
+
+        <span style="color:#aaaaaa;">
+            Total de registros: {{ calificaciones|length }}
+        </span>
+
     </div>
+
     <table>
         <thead>
-            <tr><th>Ejercicio</th><th>Instrumento</th><th>Fecha Pago</th><th>Secuencia</th><th>Origen</th><th>Factor Act.</th><th>Acciones</th></tr>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Instrumento</th>
+                <th>Mercado</th>
+                <th>Fecha Pago</th>
+                <th>Secuencia</th>
+                <th>Origen</th>
+                <th>Factor Act.</th>
+                <th>Acciones</th>
+            </tr>
         </thead>
+
         <tbody>
-            <tr><td>2026</td><td>COPEC</td><td>12-05-2026</td><td>10045</td><td>Corredora</td><td>0.32423424</td><td><button class="btn btn-danger">Eliminar</button></td></tr>
-            <tr><td>2026</td><td>CENCOSUD</td><td>18-05-2026</td><td>10046</td><td>Sistema</td><td>0.15000000</td><td><button class="btn btn-danger">Eliminar</button></td></tr>
+
+            {% for calificacion in calificaciones %}
+                <tr>
+                    <td>{{ calificacion.ejercicio }}</td>
+                    <td>{{ calificacion.instrumento }}</td>
+                    <td>{{ calificacion.get_mercado_display }}</td>
+                    <td>{{ calificacion.fecha_pago|date:"d-m-Y" }}</td>
+                    <td>{{ calificacion.secuencia }}</td>
+                    <td>{{ calificacion.get_origen_display }}</td>
+                    <td>{{ calificacion.factor_ajuste }}</td>
+
+                    <td>
+                        <div class="acciones">
+
+                            <a href="{% url 'editar' calificacion.pk %}"
+                               class="btn btn-edit">
+                                Editar
+                            </a>
+
+                            <form method="POST"
+                                  action="{% url 'eliminar' calificacion.pk %}"
+                                  onsubmit="return confirm('¿Seguro que deseas eliminar este registro?');">
+
+                                {% csrf_token %}
+
+                                <button type="submit" class="btn btn-danger">
+                                    Eliminar
+                                </button>
+
+                            </form>
+
+                        </div>
+                    </td>
+                </tr>
+
+            {% empty %}
+                <tr>
+                    <td colspan="8" class="vacio">
+                        No existen calificaciones para los filtros seleccionados.
+                    </td>
+                </tr>
+            {% endfor %}
+
         </tbody>
     </table>
+
 </body>
 </html>
+```
