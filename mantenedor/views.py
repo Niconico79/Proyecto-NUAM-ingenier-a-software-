@@ -8,6 +8,7 @@ from django.db import transaction
 
 from .models import Calificacion, RegistroAuditoria
 from .forms import CalificacionForm
+from .permisos import es_administrador, solo_administradores
 
 
 def obtener_datos(calificacion):
@@ -56,10 +57,11 @@ def inicio(request):
         'ejercicios': ejercicios,
         'mercado_seleccionado': mercado,
         'ejercicio_seleccionado': ejercicio,
+        'puede_modificar': es_administrador(request.user),
     })
 
 
-@login_required(login_url='login')
+@solo_administradores
 def crear_calificacion(request):
     form = CalificacionForm(request.POST or None)
 
@@ -83,7 +85,7 @@ def crear_calificacion(request):
     })
 
 
-@login_required(login_url='login')
+@solo_administradores
 def editar_calificacion(request, pk):
     calificacion = get_object_or_404(Calificacion, pk=pk)
     datos_anteriores = obtener_datos(calificacion)
@@ -111,7 +113,7 @@ def editar_calificacion(request, pk):
     })
 
 
-@login_required(login_url='login')
+@solo_administradores
 def eliminar_calificacion(request, pk):
     calificacion = get_object_or_404(Calificacion, pk=pk)
 
@@ -132,7 +134,7 @@ def eliminar_calificacion(request, pk):
     return redirect('inicio')
 
 
-@login_required(login_url='login')
+@solo_administradores
 def importar_csv(request):
     if request.method == 'POST':
         archivo = request.FILES.get('archivo')

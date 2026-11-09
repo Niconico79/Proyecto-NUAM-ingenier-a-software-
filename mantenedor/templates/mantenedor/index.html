@@ -159,6 +159,7 @@
 
     <div class="toolbar">
 
+        {% if puede_modificar %}
         <a href="{% url 'crear' %}" class="btn btn-secondary">
             + Ingreso Manual
         </a>
@@ -166,6 +167,7 @@
         <a href="{% url 'importar_csv' %}" class="btn btn-primary">
             Importar CSV
         </a>
+        {% endif %}
 
         <form method="GET" class="toolbar" style="margin:0; padding:0; background:none;">
 
@@ -223,7 +225,7 @@
                 <th>Secuencia</th>
                 <th>Origen</th>
                 <th>Factor Act.</th>
-                <th>Acciones</th>
+                {% if puede_modificar %}<th>Acciones</th>{% endif %}
             </tr>
         </thead>
 
@@ -239,6 +241,7 @@
                     <td>{{ calificacion.get_origen_display }}</td>
                     <td>{{ calificacion.factor_ajuste }}</td>
 
+                    {% if puede_modificar %}
                     <td>
                         <div class="acciones">
 
@@ -261,6 +264,7 @@
 
                         </div>
                     </td>
+                    {% endif %}
                 </tr>
 
             {% empty %}
