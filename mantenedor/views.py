@@ -1,4 +1,7 @@
+import csv
+import io
 
+from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Calificacion, RegistroAuditoria
@@ -121,3 +124,97 @@ def eliminar_calificacion(request, pk):
         messages.success(request, 'Calificación eliminada correctamente.')
 
     return redirect('inicio')
+
+def importar_csv(request):
+    if request.method == 'POST':
+        archivo = request.FILES.get('archivo')
+
+        if not archivo:
+            messages.error(request, 'Debes seleccionar un archivo CSV.')
+            return redirect('importar_csv')
+
+        if not archivo.name.lower().endswith('.csv'):
+            messages.error(request, 'El archivo debe tener formato CSV.')
+            return redirect('importar_csv')
+
+        try:
+            contenido = archivo.read().decode('utf-8-sig')
+            lector = csv.DictReader(io.StringIO(contenido))
+
+            columnas_requeridas = {
+                'ejercicio', 'mercado', 'instrumento', 'fecha_pago',
+                'secuencia', 'origen', 'descripcion', 'isfut',
+                'factor_ajuste'
+            }
+
+            if not lector.fieldnames or not columnas_requeridas.issubset(
+                set(lector.fieldnames)
+            ):
+                messages.error(
+                    request,
+                    'El CSV no contiene todas las columnas requeridas.'
+                )
+                return redirect('importar_csv')
+
+            calificaciones = []
+            errores = []
+
+            for numero, fila in enumerate(lector, start=2):
+                datos = {
+                    clave: (valor or '').strip()
+                    for clave, valor in fila.items()
+                    if clave is not None
+                }
+
+                form = CalificacionForm(datos)
+
+                if form.is_valid():
+                    calificaciones.append(form.save(commit=False))
+                else:
+                    errores.append(
+                        f'Fila {numero}: {form.errors.as_text()}'
+                    )
+
+            if not calificaciones and not errores:
+                errores.append('El archivo no contiene registros para importar.')
+
+            if errores:
+                return render(
+                    request,
+                    'mantenedor/importar_csv.html',
+                    {'errores': errores}
+                )
+
+            with transaction.atomic():
+                for calificacion in calificaciones:
+                    calificacion.save()
+
+                    RegistroAuditoria.objects.create(
+                        usuario=obtener_usuario(request),
+                        accion='CREAR',
+                        instrumento=calificacion.instrumento,
+                        descripcion='Calificación importada mediante archivo CSV.',
+                        datos_nuevos=obtener_datos(calificacion)
+                    )
+
+            messages.success(
+                request,
+                f'Se importaron correctamente {len(calificaciones)} calificaciones.'
+            )
+            return redirect('inicio')
+
+        except UnicodeDecodeError:
+            messages.error(
+                request,
+                'No se pudo leer el archivo. Guárdalo con codificación UTF-8.'
+            )
+            return redirect('importar_csv')
+
+        except Exception as error:
+            messages.error(
+                request,
+                f'Ocurrió un error durante la importación: {error}'
+            )
+            return redirect('importar_csv')
+
+    return render(request, 'mantenedor/importar_csv.html')

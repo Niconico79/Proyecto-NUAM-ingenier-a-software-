@@ -1,0 +1,3 @@
+ejercicio,mercado,instrumento,fecha_pago,secuencia,origen,descripcion,isfut,factor_ajuste
+2025,ACCIONES,COPEC,2025-12-15,1,CORREDOR,Prueba de importacion,false,1.2500000000
+2025,CFI,CENCOSUD,2025-12-20,2,BOLSA,Segunda prueba,true,0.9500000000
