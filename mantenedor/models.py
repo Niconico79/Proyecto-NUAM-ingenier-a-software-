@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
@@ -15,11 +16,21 @@ class Calificacion(models.Model):
         ('SISTEMA', 'Sistema'),
     ]
 
-    ejercicio = models.PositiveIntegerField()
+    ejercicio = models.PositiveIntegerField(
+        validators=[
+            MinValueValidator(1990, 'El ejercicio no puede ser anterior a 1990.'),
+            MaxValueValidator(2100, 'El ejercicio no puede ser posterior a 2100.'),
+        ]
+    )
     mercado = models.CharField(max_length=20, choices=MERCADOS)
     instrumento = models.CharField(max_length=100)
     fecha_pago = models.DateField()
-    secuencia = models.PositiveIntegerField()
+    secuencia = models.PositiveIntegerField(
+        validators=[
+            MinValueValidator(1, 'La secuencia debe ser mayor o igual a 1.'),
+            MaxValueValidator(999999, 'La secuencia es demasiado grande.'),
+        ]
+    )
     origen = models.CharField(max_length=20, choices=ORIGENES)
 
     descripcion = models.CharField(max_length=255, blank=True)
@@ -28,7 +39,11 @@ class Calificacion(models.Model):
     factor_ajuste = models.DecimalField(
         max_digits=15,
         decimal_places=10,
-        default=0
+        default=0,
+        validators=[
+            MinValueValidator(0, 'El factor de ajuste no puede ser negativo.'),
+            MaxValueValidator(99999, 'El factor de ajuste es demasiado grande.'),
+        ]
     )
 
     fecha_creacion = models.DateTimeField(auto_now_add=True)

@@ -145,6 +145,10 @@ def importar_csv(request):
             messages.error(request, 'El archivo debe tener formato CSV.')
             return redirect('importar_csv')
 
+        if archivo.size > 2 * 1024 * 1024:
+            messages.error(request, 'El archivo no puede superar los 2 MB.')
+            return redirect('importar_csv')
+
         try:
             contenido = archivo.read().decode('utf-8-sig')
             lector = csv.DictReader(io.StringIO(contenido))
@@ -220,10 +224,11 @@ def importar_csv(request):
             )
             return redirect('importar_csv')
 
-        except Exception as error:
+        except Exception:
+            # No mostramos el detalle del error al usuario por seguridad
             messages.error(
                 request,
-                f'Ocurrió un error durante la importación: {error}'
+                'Ocurrió un error durante la importación. Revisa el formato del archivo.'
             )
             return redirect('importar_csv')
 
