@@ -1,9 +1,11 @@
 import csv
 import io
 
-from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+
 from .models import Calificacion, RegistroAuditoria
 from .forms import CalificacionForm
 
@@ -28,6 +30,7 @@ def obtener_usuario(request):
     return 'Operador'
 
 
+@login_required(login_url='login')
 def inicio(request):
     calificaciones = Calificacion.objects.all().order_by('-ejercicio')
 
@@ -56,6 +59,7 @@ def inicio(request):
     })
 
 
+@login_required(login_url='login')
 def crear_calificacion(request):
     form = CalificacionForm(request.POST or None)
 
@@ -79,6 +83,7 @@ def crear_calificacion(request):
     })
 
 
+@login_required(login_url='login')
 def editar_calificacion(request, pk):
     calificacion = get_object_or_404(Calificacion, pk=pk)
     datos_anteriores = obtener_datos(calificacion)
@@ -106,6 +111,7 @@ def editar_calificacion(request, pk):
     })
 
 
+@login_required(login_url='login')
 def eliminar_calificacion(request, pk):
     calificacion = get_object_or_404(Calificacion, pk=pk)
 
@@ -125,6 +131,8 @@ def eliminar_calificacion(request, pk):
 
     return redirect('inicio')
 
+
+@login_required(login_url='login')
 def importar_csv(request):
     if request.method == 'POST':
         archivo = request.FILES.get('archivo')
@@ -176,7 +184,9 @@ def importar_csv(request):
                     )
 
             if not calificaciones and not errores:
-                errores.append('El archivo no contiene registros para importar.')
+                errores.append(
+                    'El archivo no contiene registros para importar.'
+                )
 
             if errores:
                 return render(
